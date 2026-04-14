@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: smart-attendance-tracker
+    env: node
+    buildCommand: 'cd frontend && npm install && npm run build && cd ../backend && npm install'
+    startCommand: 'cd backend && node server.js'
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false

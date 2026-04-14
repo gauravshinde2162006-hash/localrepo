@@ -1,7 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import subjectRoutes from './routes/subjects.js';
@@ -10,7 +11,7 @@ import studentRoutes from './routes/students.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-dotenv.config();
+// Database connection managed below in connectDB()
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,7 +26,7 @@ app.use(express.json());
 // Database Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smartAttendanceDB', { serverSelectionTimeoutMS: 3000 });
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/smartAttendanceDB', { serverSelectionTimeoutMS: 3000 });
     console.log('Connected to Primary MongoDB');
   } catch (error) {
     console.log('Local MongoDB connection failed. Booting up In-Memory Database...');
@@ -49,7 +50,7 @@ app.get('/api/health', (req, res) => {
 
 // Serve Frontend (path goes UP one level from backend to frontend/dist)
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
